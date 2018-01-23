@@ -1,0 +1,40 @@
+body {
+    display: block;
+    text-align: center;
+}
+
+img {
+    display:table;
+    /*border: 1px solid black;*/
+}
+
+.imageDiv {
+    border: 2px solid red;
+    margin: 0 auto;
+    position: relative;
+    background-repeat: no-repeat;
+}
+
+.insideTextDiv {
+    /*float:left;*/
+    color: aliceblue;
+    position: absolute;
+    padding: 2px;
+    display: inline-block;
+    user-select: none;
+    white-space: nowrap;
+    border-radius: 5px;
+    background-color: rgba(34,34,34,.75);
+    opacity: .9;
+    border: 1px solid #000;
+    cursor: pointer;
+}
+
+.del {
+    display: none;
+    /*float:left;*/
+}
+
+.revers {
+    transform: scaleX(-1);
+}
