@@ -16,9 +16,10 @@ img {
 }
 
 .insideTextDiv {
+    display: flex;
     font-size: 20px;
     position: absolute;
-    display: inline-block;
+    /*display: inline-block;*/
     user-select: none;
     white-space: nowrap;
     border-radius: 5px;
@@ -27,6 +28,11 @@ img {
     border: 1px solid #000;
     cursor: pointer;
 }
+
+/*.revers {*/
+    /*flex-direction: row-reverse;*/
+    /*display: flex;*/
+/*}*/
 
 .del-visible {
     background-color: #f44336;
