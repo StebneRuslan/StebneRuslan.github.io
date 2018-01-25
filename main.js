@@ -1,23 +1,25 @@
 let input = document.getElementById('input');
 let imageDiv = document.getElementById('imageDiv');
-const image = document.getElementById('image');
-imageDiv.style.width = image.offsetWidth + 'px';
+let move = false;
+
+document.getElementById('imageDiv').addEventListener('click', addBlock, false);
 
 function addBlock (e) {
     let imageParams = imageDiv.getBoundingClientRect();
     let div = document.createElement('DIV');
     div.textContent = input.value;
-
     div.setAttribute('class', 'insideTextDiv');
+
     let del = document.createElement('SPAN');
     del.setAttribute('class', 'del');
     del.classList.add('del-visible');
     del.addEventListener('click', remove);
     del.textContent = 'X';
+
     div.append(del);
 
     div.addEventListener('mousedown', take);
-
+    div.addEventListener('touchstart', take);
     div.addEventListener('click', addDelButton);
 
     imageDiv.append(div);
@@ -27,10 +29,9 @@ function addBlock (e) {
     div.style.top = (e.y - imageParams.top - (divParams.bottom - divParams.top) / 2) + 'px';
     divParams = div.getBoundingClientRect();
     checkOverflow(imageParams, divParams, div);
-    e.stopPropagation();
 }
 
-document.getElementById('imageDiv').addEventListener('click', addBlock);
+
 
 function addDelButton(e) {
     if (!move) {
@@ -44,14 +45,11 @@ function addDelButton(e) {
         {
             console.dir(del.right);
             console.dir(divParams.x);
-            console.dir(del.right - divParams.right);
-            e.target.style.left = parseFloat(e.target.style.left) + (divParams.right - del.right) / 2.0 + 5 + 'px';
+            console.dir(divParams.right - del.right);
+            e.target.style.left = parseFloat(e.target.style.left) + (divParams.right - del.right) / 2.2 + 'px';
         }
         checkOverflow(imageParams, divParams, e.target);
     }
-
-
-
     e.stopPropagation();
     move = false;
 }
@@ -60,56 +58,98 @@ function remove(e) {
     e.target.parentElement.remove();
     console.dir(e.target);
     e.stopPropagation();
+    move = true;
 }
 
-function checkOverflow(parent, child, element) { // зробити чистою
-
+function checkOverflow(parent, child, element) {
     if (parent.top > child.top) {
         element.style.top = parseFloat(element.style.top) - (child.top - parent.top) + 'px';
     } if (parent.bottom < child.bottom) {
         element.style.top = parseFloat(element.style.top) - (child.bottom - parent.bottom) + 'px';
     } if (parent.left > child.left) {
         element.style.left = parseFloat(element.style.left) - (child.left - parent.left) + 'px';
-    } if (parent.right < child.right) {
-
-        element.style.left = parseFloat(element.style.left) - (child.right - parent.right) + 'px';
+    } if (parent.right < child.right + 3) {
         element.style.flexDirection = 'row-reverse';
-        // const delSpan = element.children[0];
-        // element.removeChild(element.children[0]);
-        // element.prepend(delSpan);
-    } if (parent.right >= child.right + 2) {
+        element.style.left = parseFloat(element.style.left) - (child.right - parent.right) + 'px';
+    } if (parent.right > child.right + 3) {
         element.style.flexDirection = 'row';
-        // const delSpan = element.children[0];
-        // element.removeChild(element.children[0]);
-        // element.append(delSpan);
     }
 }
 
-let move = false;
-
 function take(e) {
-    let divParams = this.getBoundingClientRect();
-    let centerX = e.x - divParams.left;
-    let centerY = e.y - divParams.top;
-    console.log('mouse down');
+    let divParams = e.target.getBoundingClientRect();
+    let centerX;
+    let centerY;
+    if (e.type === 'touchstart') {
+        centerX = e.targetTouches[0].clientX - divParams.left;
+        centerY = e.targetTouches[0].clientY - divParams.top;
+    } else {
+        centerX = e.x - divParams.left;
+        centerY = e.y - divParams.top;
+    }
+
+    e.target.canMove = true;
+
     this.removeEventListener('click', addDelButton);
+    document.addEventListener('mousemove',(event) => {
+        divMove(e, event, centerX, centerY)
+    }, false);
+
+    document.addEventListener('touchmove', (event) => {
+        divMove(e, event, centerX, centerY)
+    });
+
+    e.target.addEventListener('mouseup', () => {
+        moveEnd(e);
+    }, false);
+
+    e.target.addEventListener('touchend', () => {
+        moveEnd(e);
+    }, false);
+}
+
+function moveEnd(e) {
+    e.target.addEventListener('click', addDelButton, false);
+    e.target.canMove = false;
+    if (e.type === 'touchstart') {
+        move = false;
+    }
+}
+
+
+function divMove(e, event, centerX, centerY) {
+    if (event.type === 'touchmove') {
+        event.clientX = event.targetTouches[0].clientX;
+        event.clientY = event.targetTouches[0].clientY;
+    }
+    let divParams = e.target.getBoundingClientRect();
     let imageParams = imageDiv.getBoundingClientRect();
-    document.body.onmousemove =((event) => {
+    if (e.target.canMove) {
+
         move = true;
-        divParams = this.getBoundingClientRect();
         if (event.clientX + (divParams.right - divParams.left) - centerX < imageParams.right
             && event.clientX - centerX > imageParams.left) {
-            this.style.left = event.x - centerX - imageParams.left + 'px';
+            if(event.clientX < imageParams.right) {
+                e.target.style.left = event.clientX - centerX - imageParams.left + 'px';
+            }
         }
         if (event.clientY + (divParams.bottom - divParams.top) - centerY < imageParams.bottom
             && event.clientY - centerY > imageParams.top) {
-            this.style.top = event.y - centerY - imageParams.top + 'px';
+            e.target.style.top = event.clientY - centerY - imageParams.top + 'px';
         }
-        checkOverflow(imageParams, divParams, this);
-    });
+        if (event.clientX > imageParams.right) {
+            e.target.style.left = imageParams.right - imageParams.left - divParams.width + 'px';
+        }
+        if (event.clientX < imageParams.left) {
+            e.target.style.left = 0 + 'px';
+        }
+        if (event.clientY < imageParams.top) {
+            e.target.style.top = 0 + 'px';
+        }
+        if (event.clientY > imageParams.bottom) {
+            e.target.style.top = imageParams.bottom - divParams.height - centerY + imageParams.top + 'px';
+        }
+        checkOverflow(imageParams, divParams, e.target);
 
-    this.addEventListener('mouseup', () => {
-        document.body.onmousemove = null;
-        this.addEventListener('click', addDelButton);
-    });
+    }
 }
