@@ -71,7 +71,7 @@ function checkOverflow(parent, child, element) {
         element.style.top = parseFloat(element.style.top) - (child.bottom - parent.bottom) + 'px';
     } if (parent.left > child.left) {
         element.style.left = parseFloat(element.style.left) - (child.left - parent.left) + 'px';
-    } if (parent.right < child.right + 3) {
+    } if (parent.right < child.right + 3 && element.classList.contains('del')) {
         element.style.flexDirection = 'row-reverse';
         element.style.left = parseFloat(element.style.left) - (child.right - parent.right) + 'px';
     } if (parent.right > child.right + 3) {
