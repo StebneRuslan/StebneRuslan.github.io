@@ -5,6 +5,9 @@ let move = false;
 document.getElementById('imageDiv').addEventListener('click', addBlock, false);
 
 function addBlock (e) {
+    if (e.target.value === '') {
+        return false;
+    }
     let imageParams = imageDiv.getBoundingClientRect();
     let div = document.createElement('DIV');
     div.textContent = input.value;
@@ -135,7 +138,9 @@ function divMove(e, event, centerX, centerY) {
         }
         if (event.clientY + (divParams.bottom - divParams.top) - centerY < imageParams.bottom
             && event.clientY - centerY > imageParams.top) {
-            e.target.style.top = event.clientY - centerY - imageParams.top + 'px';
+            if(event.clientY < imageParams.bottom) {
+                e.target.style.top = event.clientY - centerY - imageParams.top + 'px';
+            }
         }
         if (event.clientX > imageParams.right) {
             e.target.style.left = imageParams.right - imageParams.left - divParams.width + 'px';
@@ -147,7 +152,7 @@ function divMove(e, event, centerX, centerY) {
             e.target.style.top = 0 + 'px';
         }
         if (event.clientY > imageParams.bottom) {
-            e.target.style.top = imageParams.bottom - divParams.height - centerY + imageParams.top + 'px';
+            e.target.style.top = imageParams.bottom - divParams.height - imageParams.top + 'px';
         }
         checkOverflow(imageParams, divParams, e.target);
 
