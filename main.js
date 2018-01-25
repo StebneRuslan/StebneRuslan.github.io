@@ -46,9 +46,6 @@ function addDelButton(e) {
         if(e.target.children[0].classList.contains('del')
             && e.target.style.flexDirection === 'row-reverse')
         {
-            console.dir(del.right);
-            console.dir(divParams.x);
-            console.dir(divParams.right - del.right);
             e.target.style.left = parseFloat(e.target.style.left) + (divParams.right - del.right) / 2.2 + 'px';
         }
         checkOverflow(imageParams, divParams, e.target);
@@ -71,7 +68,7 @@ function checkOverflow(parent, child, element) {
         element.style.top = parseFloat(element.style.top) - (child.bottom - parent.bottom) + 'px';
     } if (parent.left > child.left) {
         element.style.left = parseFloat(element.style.left) - (child.left - parent.left) + 'px';
-    } if (parent.right < child.right + 3 && element.classList.contains('del')) {
+    } if (parent.right < child.right + 3 ) {
         element.style.flexDirection = 'row-reverse';
         element.style.left = parseFloat(element.style.left) - (child.right - parent.right) + 'px';
     } if (parent.right > child.right + 3) {
