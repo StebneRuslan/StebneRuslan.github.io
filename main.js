@@ -11,7 +11,7 @@ function addBlock (e) {
         div.textContent = input.value;
         div.setAttribute('class', 'insideTextDiv');
         let del = document.createElement('SPAN');
-        del.setAttribute('class', 'del');
+        del.setAttribute('class', 'del focus');
         del.classList.add('del-visible');
         del.addEventListener('click', remove);
         del.textContent = 'X';
@@ -35,6 +35,7 @@ function addDelButton(e) {
     if (!moved) {
         let del = e.target.children[0].getBoundingClientRect();
         e.target.children[0].classList.toggle('del');
+        e.target.children[0].classList.remove('focus');
         let imageParams = imageDiv.getBoundingClientRect();
         let divParams = e.target.getBoundingClientRect();
 
@@ -43,6 +44,11 @@ function addDelButton(e) {
         {
             e.target.style.left = parseFloat(e.target.style.left) + del.width + 'px';
         }
+        let allElements = document.querySelectorAll('.focus');
+        for (let i = 0; i < allElements.length; i++) {
+            allElements[i].classList.add('del');
+        }
+        e.target.children[0].classList.add('focus');
         checkOverflow(imageParams, divParams, e.target);
     }
     e.stopPropagation();
