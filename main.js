@@ -1,6 +1,6 @@
 let input = document.getElementById('input');
 let imageDiv = document.getElementById('imageDiv');
-let move = false;
+let moved = false;
 
 document.getElementById('imageDiv').addEventListener('click', addBlock, false);
 
@@ -34,10 +34,8 @@ function addBlock (e) {
     checkOverflow(imageParams, divParams, div);
 }
 
-
-
 function addDelButton(e) {
-    if (!move) {
+    if (!moved) {
         let del = e.target.children[0].getBoundingClientRect();
         e.target.children[0].classList.toggle('del');
         let imageParams = imageDiv.getBoundingClientRect();
@@ -51,14 +49,14 @@ function addDelButton(e) {
         checkOverflow(imageParams, divParams, e.target);
     }
     e.stopPropagation();
-    move = false;
+    moved = false;
 }
 
 function remove(e) {
     e.target.parentElement.remove();
     console.dir(e.target);
     e.stopPropagation();
-    move = true;
+    moved = true;
 }
 
 function checkOverflow(parent, child, element) {
@@ -99,23 +97,18 @@ function take(e) {
         divMove(e, event, centerX, centerY)
     };
 
-    e.target.addEventListener('mouseup', () => {
-        moveEnd(e);
-        document.onmousemove = null;
-    }, false);
+    e.target.addEventListener('mouseup', moveEnd, false);
 
-    e.target.addEventListener('touchend', () => {
-        moveEnd(e);
-        document.ontouchmove = null;
-    }, false);
+    e.target.addEventListener('touchend', moveEnd, false);
 }
 
 function moveEnd(e) {
     e.target.addEventListener('click', addDelButton, false);
     e.target.canMove = false;
     if (e.type === 'touchstart') {
-        move = false;
+        moved = false;
     }
+    document.ontouchmove = null;
 }
 
 function divMove(e, event, centerX, centerY) {
@@ -126,7 +119,7 @@ function divMove(e, event, centerX, centerY) {
     let divParams = e.target.getBoundingClientRect();
     let imageParams = imageDiv.getBoundingClientRect();
     if (e.target.canMove) {
-        move = true;
+        moved = true;
         if (event.clientX + (divParams.right - divParams.left) - centerX < imageParams.right
             && event.clientX - centerX > imageParams.left) {
             if(event.clientX < imageParams.right) {
