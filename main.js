@@ -90,21 +90,23 @@ function take(e) {
 
     e.target.canMove = true;
 
-    this.removeEventListener('click', addDelButton);
-    document.addEventListener('mousemove',(event) => {
+    e.target.removeEventListener('click', addDelButton);
+    document.onmousemove = (event) => {
         divMove(e, event, centerX, centerY)
-    }, false);
+    };
 
-    document.addEventListener('touchmove', (event) => {
+    document.ontouchmove = (event) => {
         divMove(e, event, centerX, centerY)
-    });
+    };
 
     e.target.addEventListener('mouseup', () => {
         moveEnd(e);
+        document.onmousemove = null;
     }, false);
 
     e.target.addEventListener('touchend', () => {
         moveEnd(e);
+        document.ontouchmove = null;
     }, false);
 }
 
@@ -116,7 +118,6 @@ function moveEnd(e) {
     }
 }
 
-
 function divMove(e, event, centerX, centerY) {
     if (event.type === 'touchmove') {
         event.clientX = event.targetTouches[0].clientX;
@@ -125,7 +126,6 @@ function divMove(e, event, centerX, centerY) {
     let divParams = e.target.getBoundingClientRect();
     let imageParams = imageDiv.getBoundingClientRect();
     if (e.target.canMove) {
-
         move = true;
         if (event.clientX + (divParams.right - divParams.left) - centerX < imageParams.right
             && event.clientX - centerX > imageParams.left) {
