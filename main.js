@@ -5,33 +5,30 @@ let moved = false;
 document.getElementById('imageDiv').addEventListener('click', addBlock, false);
 
 function addBlock (e) {
-    if (e.target.value === '') {
+    if (input.value !== '') {
+        let imageParams = imageDiv.getBoundingClientRect();
+        let div = document.createElement('DIV');
+        div.textContent = input.value;
+        div.setAttribute('class', 'insideTextDiv');
+        let del = document.createElement('SPAN');
+        del.setAttribute('class', 'del');
+        del.classList.add('del-visible');
+        del.addEventListener('click', remove);
+        del.textContent = 'X';
+        div.append(del);
+        div.addEventListener('mousedown', take);
+        div.addEventListener('touchstart', take);
+        div.addEventListener('click', addDelButton);
+        imageDiv.append(div);
+        let divParams = div.getBoundingClientRect();
+        div.style.left = (e.x - imageParams.left - (divParams.right - divParams.left) / 2) + 'px';
+        div.style.top = (e.y - imageParams.top - (divParams.bottom - divParams.top) / 2) + 'px';
+        divParams = div.getBoundingClientRect();
+        checkOverflow(imageParams, divParams, div);
+        input.value = '';
+    } else {
         return false;
     }
-    let imageParams = imageDiv.getBoundingClientRect();
-    let div = document.createElement('DIV');
-    div.textContent = input.value;
-    div.setAttribute('class', 'insideTextDiv');
-
-    let del = document.createElement('SPAN');
-    del.setAttribute('class', 'del');
-    del.classList.add('del-visible');
-    del.addEventListener('click', remove);
-    del.textContent = 'X';
-
-    div.append(del);
-
-    div.addEventListener('mousedown', take);
-    div.addEventListener('touchstart', take);
-    div.addEventListener('click', addDelButton);
-
-    imageDiv.append(div);
-    let divParams = div.getBoundingClientRect();
-
-    div.style.left = (e.x - imageParams.left - (divParams.right - divParams.left) / 2) + 'px';
-    div.style.top = (e.y - imageParams.top - (divParams.bottom - divParams.top) / 2) + 'px';
-    divParams = div.getBoundingClientRect();
-    checkOverflow(imageParams, divParams, div);
 }
 
 function addDelButton(e) {
@@ -54,7 +51,6 @@ function addDelButton(e) {
 
 function remove(e) {
     e.target.parentElement.remove();
-    console.dir(e.target);
     e.stopPropagation();
     moved = true;
 }
@@ -66,7 +62,7 @@ function checkOverflow(parent, child, element) {
         element.style.top = parseFloat(element.style.top) - (child.bottom - parent.bottom) + 'px';
     } if (parent.left > child.left) {
         element.style.left = parseFloat(element.style.left) - (child.left - parent.left) + 'px';
-    } if (parent.right < child.right + 3 ) {
+    } if (parent.right < child.right + 3) {
         element.style.flexDirection = 'row-reverse';
         element.style.left = parseFloat(element.style.left) - (child.right - parent.right) + 'px';
     } if (parent.right > child.right + 3) {
