@@ -22,7 +22,7 @@ img {
 
 .insideTextDiv {
     display: flex;
-    font-size: 25px;
+    font-size: 20px;
     position: absolute;
     /*display: inline-block;*/
     user-select: none;

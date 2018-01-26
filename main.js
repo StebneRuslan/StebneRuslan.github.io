@@ -41,7 +41,7 @@ function addDelButton(e) {
         if(e.target.children[0].classList.contains('del')
             && e.target.style.flexDirection === 'row-reverse')
         {
-            e.target.style.left = parseFloat(e.target.style.left) + (divParams.right - del.right) / 2.2 + 'px';
+            e.target.style.left = parseFloat(e.target.style.left) + del.width + 'px';
         }
         checkOverflow(imageParams, divParams, e.target);
     }
@@ -51,6 +51,7 @@ function addDelButton(e) {
 
 function remove(e) {
     e.target.parentElement.remove();
+
     e.stopPropagation();
     moved = true;
 }
