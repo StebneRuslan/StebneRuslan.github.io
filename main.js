@@ -57,22 +57,24 @@ function addDelButton(e) {
 
 function remove(e) {
     e.target.parentElement.remove();
-
     e.stopPropagation();
     moved = true;
 }
 
 function checkOverflow(parent, child, element) {
+    const width = element.children[0].getBoundingClientRect().width;
     if (parent.top > child.top) {
         element.style.top = parseFloat(element.style.top) - (child.top - parent.top) + 'px';
     } if (parent.bottom < child.bottom) {
         element.style.top = parseFloat(element.style.top) - (child.bottom - parent.bottom) + 'px';
     } if (parent.left > child.left) {
         element.style.left = parseFloat(element.style.left) - (child.left - parent.left) + 'px';
-    } if (parent.right < child.right + 3) {
+    } if (parent.right < child.right + width) {
         element.style.flexDirection = 'row-reverse';
-        element.style.left = parseFloat(element.style.left) - (child.right - parent.right) + 'px';
-    } if (parent.right > child.right + 3) {
+        if (!moved) {
+            element.style.left = parseFloat(element.style.left) - (child.right - parent.right) + 'px';
+        }
+    } if (parent.right > child.right + width) {
         element.style.flexDirection = 'row';
     }
 }
@@ -115,6 +117,9 @@ function moveEnd(e) {
 }
 
 function divMove(e, event, centerX, centerY) {
+    if (e.target.tagName !== 'DIV') {
+        return false;
+    }
     if (event.type === 'touchmove') {
         event.clientX = event.targetTouches[0].clientX;
         event.clientY = event.targetTouches[0].clientY;
@@ -148,6 +153,5 @@ function divMove(e, event, centerX, centerY) {
             e.target.style.top = imageParams.bottom - divParams.height - imageParams.top + 'px';
         }
         checkOverflow(imageParams, divParams, e.target);
-
     }
 }
