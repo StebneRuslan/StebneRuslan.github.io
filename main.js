@@ -92,28 +92,15 @@ function take(e) {
     }
 
     e.target.canMove = true;
-
     e.target.removeEventListener('click', addDelButton);
     document.onmousemove = (event) => {
         divMove(e, event, centerX, centerY)
     };
-
     document.ontouchmove = (event) => {
         divMove(e, event, centerX, centerY)
     };
-
     e.target.addEventListener('mouseup', moveEnd, false);
-
     e.target.addEventListener('touchend', moveEnd, false);
-}
-
-function moveEnd(e) {
-    e.target.addEventListener('click', addDelButton, false);
-    e.target.canMove = false;
-    if (e.type === 'touchstart') {
-        moved = false;
-    }
-    document.ontouchmove = null;
 }
 
 function divMove(e, event, centerX, centerY) {
@@ -154,4 +141,13 @@ function divMove(e, event, centerX, centerY) {
         }
         checkOverflow(imageParams, divParams, e.target);
     }
+}
+
+function moveEnd(e) {
+    e.target.addEventListener('click', addDelButton, false);
+    e.target.canMove = false;
+    if (e.type === 'touchstart') {
+        moved = false;
+    }
+    document.ontouchmove = null;
 }
